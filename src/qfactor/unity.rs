@@ -1,5 +1,5 @@
-use crate::Qfactor;
 use crate::Result;
+use crate::qfactor::Qfactor;
 
 /// q-factor of 1
 ///
@@ -45,7 +45,7 @@ mod test {
 
     #[test]
     fn test_unity() {
-        let qfactor = Unity::new().unwrap();
+        let qfactor = qfactor::Unity::new().unwrap();
 
         assert_eq!(qfactor.q(0.01).unwrap(), 1.0);
         assert_eq!(qfactor.psip(0.01).unwrap(), 0.01);

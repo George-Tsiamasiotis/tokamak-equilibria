@@ -1,5 +1,5 @@
-use crate::Qfactor;
 use crate::Result;
+use crate::qfactor::Qfactor;
 
 /// Parabolic q-factor.
 ///
@@ -75,7 +75,7 @@ mod test {
         let q0 = 1.1;
         let qwall = 3.8;
         let psi_wall = 0.04591368227731865;
-        let qfactor = Parabolic::new(q0, qwall, psi_wall).unwrap();
+        let qfactor = qfactor::Parabolic::new(q0, qwall, psi_wall).unwrap();
 
         assert!(is_close!(qfactor.q(0.0).unwrap(), q0));
         assert!(is_close!(qfactor.q(0.01).unwrap(), 1.228079468));

@@ -1,4 +1,5 @@
-use crate::{Bfield, Result};
+use crate::Result;
+use crate::bfield::Bfield;
 
 /// Representation of Large Aspect Ratio magnetic field.
 pub struct Lar;
@@ -56,7 +57,7 @@ mod test {
     #[test]
     /// Values cross-tested with gcmotion.
     fn test_lar() {
-        let bfield = Lar::new().unwrap();
+        let bfield = bfield::Lar::new().unwrap();
 
         assert_eq!(bfield.b(0.01, 1.0).unwrap(), 0.9235897151259821);
         assert_eq!(bfield.db_dpsi(0.01, 1.0).unwrap(), -3.820514243700898);

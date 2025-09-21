@@ -1,8 +1,11 @@
-use crate::Efield;
 use crate::Result;
+use crate::efield::Efield;
 
 pub struct NoEfield;
 
+/// No electric field
+///
+/// Exists for compatibility reasons.
 impl NoEfield {
     pub fn new() -> Result<Self> {
         Ok(Self {})
@@ -45,7 +48,7 @@ mod test {
 
     #[test]
     fn test_no_efield() {
-        let efield = NoEfield::new().unwrap();
+        let efield = efield::NoEfield::new().unwrap();
 
         assert_eq!(efield.phi(0.0, 0.0).unwrap(), 0.0);
         assert_eq!(efield.e(0.0, 0.0).unwrap(), 0.0);
