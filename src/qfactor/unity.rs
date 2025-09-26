@@ -1,3 +1,5 @@
+use rsl_interpolation::Accelerator;
+
 use crate::Result;
 use crate::qfactor::Qfactor;
 
@@ -27,13 +29,14 @@ impl Unity {
 impl Qfactor for Unity {
     /// Always returns `1.0`.
     #[allow(unused_variables)]
-    fn q(&self, psi: f64) -> Result<f64> {
+    fn q(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(1.0)
     }
 
     /// Always returns `psi`.
-    fn psip(&self, psi: f64) -> Result<f64> {
+    #[allow(unused_variables)]
+    fn psip(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(psi)
     }
@@ -47,7 +50,7 @@ mod test {
     fn test_unity() {
         let qfactor = qfactor::Unity::new().unwrap();
 
-        assert_eq!(qfactor.q(0.01).unwrap(), 1.0);
-        assert_eq!(qfactor.psip(0.01).unwrap(), 0.01);
+        assert_eq!(qfactor.q(0.01, None).unwrap(), 1.0);
+        assert_eq!(qfactor.psip(0.01, None).unwrap(), 0.01);
     }
 }

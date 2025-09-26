@@ -1,5 +1,7 @@
 //! Various plasma current profiles.
 
+use rsl_interpolation::Accelerator;
+
 use crate::Result;
 
 mod lar;
@@ -17,11 +19,11 @@ pub trait Current {
     /// #
     /// # fn main() -> Result<()> {
     /// let cur = current::Lar::new()?;
-    /// let i = cur.i(0.015)?;
+    /// let i = cur.i(0.015, None)?;
     /// # Ok(())
     /// # }
     /// ```
-    fn i(&self, psi: f64) -> Result<f64>;
+    fn i(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64>;
 
     /// Calculates `g(ψ, θ)`
     ///
@@ -32,11 +34,11 @@ pub trait Current {
     /// #
     /// # fn main() -> Result<()> {
     /// let cur = current::Lar::new()?;
-    /// let g = cur.g(0.015)?;
+    /// let g = cur.g(0.015, None)?;
     /// # Ok(())
     /// # }
     /// ```
-    fn g(&self, psi: f64) -> Result<f64>;
+    fn g(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64>;
 
     /// Calculates `𝜕I(ψ, θ)/𝜕ψ`
     ///
@@ -47,7 +49,7 @@ pub trait Current {
     /// #
     /// # fn main() -> Result<()> {
     /// let cur = current::Lar::new()?;
-    /// let i_der = cur.i_der(0.015)?;
+    /// let i_der = cur.i_der(0.015, None)?;
     /// # Ok(())
     /// # }
     /// ```
@@ -57,7 +59,7 @@ pub trait Current {
     /// Current derivatives are calculated with respect to `ψ`, and not `𝜓ₚ`, which appears in the
     /// guiding center equations of motion. To get the derivatives with respect to `𝜓ₚ`, we can
     /// simply multiply with `q(ψ)`.
-    fn i_der(&self, psi: f64) -> Result<f64>;
+    fn i_der(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64>;
 
     /// Calculates `𝜕g(ψ, θ)/𝜕ψ`
     ///
@@ -68,7 +70,7 @@ pub trait Current {
     /// #
     /// # fn main() -> Result<()> {
     /// let cur = current::Lar::new()?;
-    /// let g_der = cur.g_der(0.015)?;
+    /// let g_der = cur.g_der(0.015, None)?;
     /// # Ok(())
     /// # }
     /// ```
@@ -78,5 +80,5 @@ pub trait Current {
     /// Current derivatives are calculated with respect to `ψ`, and not `𝜓ₚ`, which appears in the
     /// guiding center equations of motion. To get the derivatives with respect to `𝜓ₚ`, we can
     /// simply multiply with `q(ψ)`.
-    fn g_der(&self, psi: f64) -> Result<f64>;
+    fn g_der(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64>;
 }

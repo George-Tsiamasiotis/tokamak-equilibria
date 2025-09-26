@@ -1,5 +1,7 @@
 //! Various magnetic field profiles.
 
+use rsl_interpolation::Accelerator;
+
 use crate::Result;
 
 mod lar;
@@ -18,11 +20,17 @@ pub trait Bfield {
     /// #
     /// # fn main() -> Result<()> {
     /// let bfield = bfield::Lar::new()?;
-    /// let b =  bfield.b(0.015, 2.0*PI)?;
+    /// let b =  bfield.b(0.015, 2.0*PI, None, None)?;
     /// # Ok(())
     /// # }
     /// ```
-    fn b(&self, psi: f64, theta: f64) -> Result<f64>;
+    fn b(
+        &self,
+        psi: f64,
+        theta: f64,
+        xacc: Option<&mut Accelerator>,
+        yacc: Option<&mut Accelerator>,
+    ) -> Result<f64>;
 
     /// Calculates `𝜕B /𝜕𝜃`.
     ///
@@ -34,11 +42,17 @@ pub trait Bfield {
     /// #
     /// # fn main() -> Result<()> {
     /// let bfield = bfield::Lar::new()?;
-    /// let b =  bfield.db_dtheta(0.015, 2.0*PI)?;
+    /// let b =  bfield.db_dtheta(0.015, 2.0*PI, None, None)?;
     /// # Ok(())
     /// # }
     /// ```
-    fn db_dtheta(&self, psi: f64, theta: f64) -> Result<f64>;
+    fn db_dtheta(
+        &self,
+        psi: f64,
+        theta: f64,
+        xacc: Option<&mut Accelerator>,
+        yacc: Option<&mut Accelerator>,
+    ) -> Result<f64>;
 
     /// Calculates `𝜕B /𝜕ψ`.
     ///
@@ -50,11 +64,17 @@ pub trait Bfield {
     /// #
     /// # fn main() -> Result<()> {
     /// let bfield = bfield::Lar::new()?;
-    /// let b =  bfield.db_dpsi(0.015, 2.0*PI)?;
+    /// let b =  bfield.db_dpsi(0.015, 2.0*PI, None, None)?;
     /// # Ok(())
     /// # }
     /// ```
-    fn db_dpsi(&self, psi: f64, theta: f64) -> Result<f64>;
+    fn db_dpsi(
+        &self,
+        psi: f64,
+        theta: f64,
+        xacc: Option<&mut Accelerator>,
+        yacc: Option<&mut Accelerator>,
+    ) -> Result<f64>;
 
     /// Calculates `𝜕²B /𝜕𝜓²`.
     ///
@@ -66,9 +86,15 @@ pub trait Bfield {
     /// #
     /// # fn main() -> Result<()> {
     /// let bfield = bfield::Lar::new()?;
-    /// let b =  bfield.d2b_dpsi2(0.015, 2.0*PI)?;
+    /// let b =  bfield.d2b_dpsi2(0.015, 2.0*PI, None, None)?;
     /// # Ok(())
     /// # }
     /// ```
-    fn d2b_dpsi2(&self, psi: f64, theta: f64) -> Result<f64>;
+    fn d2b_dpsi2(
+        &self,
+        psi: f64,
+        theta: f64,
+        xacc: Option<&mut Accelerator>,
+        yacc: Option<&mut Accelerator>,
+    ) -> Result<f64>;
 }

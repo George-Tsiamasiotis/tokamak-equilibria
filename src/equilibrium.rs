@@ -80,9 +80,9 @@ mod test {
 
         let eq = Equilibrium::from_analytical(qfactor, bfield, current, efield).unwrap();
 
-        eq.bfield.b(0.01, 3.14).unwrap();
-        eq.efield.phi(0.01, 3.14).unwrap();
-        eq.current.i(0.01).unwrap();
-        eq.qfactor.q(0.01).unwrap();
+        eq.bfield.b(0.01, 3.14, None, None).unwrap();
+        eq.efield.phi(0.01, 3.14, None, None).unwrap();
+        eq.current.i(0.01, None).unwrap();
+        eq.qfactor.q(0.01, None).unwrap();
     }
 }

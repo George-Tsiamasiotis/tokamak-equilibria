@@ -1,3 +1,5 @@
+use rsl_interpolation::Accelerator;
+
 use crate::Result;
 use crate::bfield::Bfield;
 
@@ -26,25 +28,53 @@ impl Lar {
 
 impl Bfield for Lar {
     /// Returns `1 − √(2𝜓)⋅cos𝜃`
-    fn b(&self, psi: f64, theta: f64) -> Result<f64> {
+    #[allow(unused_variables)]
+    fn b(
+        &self,
+        psi: f64,
+        theta: f64,
+        xacc: Option<&mut Accelerator>,
+        yacc: Option<&mut Accelerator>,
+    ) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(1.0 - (2.0 * psi).sqrt() * theta.cos())
     }
 
     /// Returns `√(2𝜓)⋅sin𝜃`
-    fn db_dtheta(&self, psi: f64, theta: f64) -> Result<f64> {
+    #[allow(unused_variables)]
+    fn db_dtheta(
+        &self,
+        psi: f64,
+        theta: f64,
+        xacc: Option<&mut Accelerator>,
+        yacc: Option<&mut Accelerator>,
+    ) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok((2.0 * psi).sqrt() * theta.sin())
     }
 
     /// Returns `-cosθ/√(2𝜓)`
-    fn db_dpsi(&self, psi: f64, theta: f64) -> Result<f64> {
+    #[allow(unused_variables)]
+    fn db_dpsi(
+        &self,
+        psi: f64,
+        theta: f64,
+        xacc: Option<&mut Accelerator>,
+        yacc: Option<&mut Accelerator>,
+    ) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(-theta.cos() / (2.0 * psi).sqrt())
     }
 
     /// Returns `-cosθ/(2*𝜓)³ᐟ²`
-    fn d2b_dpsi2(&self, psi: f64, theta: f64) -> Result<f64> {
+    #[allow(unused_variables)]
+    fn d2b_dpsi2(
+        &self,
+        psi: f64,
+        theta: f64,
+        xacc: Option<&mut Accelerator>,
+        yacc: Option<&mut Accelerator>,
+    ) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(theta.cos() / (2.0 * psi.sqrt()).powf(3.0 / 2.0))
     }
@@ -59,8 +89,14 @@ mod test {
     fn test_lar() {
         let bfield = bfield::Lar::new().unwrap();
 
-        assert_eq!(bfield.b(0.01, 1.0).unwrap(), 0.9235897151259821);
-        assert_eq!(bfield.db_dpsi(0.01, 1.0).unwrap(), -3.820514243700898);
-        assert_eq!(bfield.db_dtheta(0.01, 1.0).unwrap(), 0.11900196790587718);
+        assert_eq!(bfield.b(0.01, 1.0, None, None).unwrap(), 0.9235897151259821);
+        assert_eq!(
+            bfield.db_dpsi(0.01, 1.0, None, None).unwrap(),
+            -3.820514243700898
+        );
+        assert_eq!(
+            bfield.db_dtheta(0.01, 1.0, None, None).unwrap(),
+            0.11900196790587718
+        );
     }
 }

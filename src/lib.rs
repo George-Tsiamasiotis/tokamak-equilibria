@@ -14,10 +14,10 @@
 //! let eq = Equilibrium::from_analytical(qfactor, bfield, current, efield)?;
 //!
 //! // Evaluation of electromagnetic field and q-factor inside the tokamak.
-//! let q = eq.qfactor.q(0.01)?;
-//! let b = eq.bfield.b(0.01, PI)?;
-//! let i = eq.current.i(0.01)?;
-//! let phi = eq.efield.phi(0.01, PI)?;
+//! let q = eq.qfactor.q(0.01, None)?;
+//! let b = eq.bfield.b(0.01, PI, None, None)?;
+//! let i = eq.current.i(0.01, None)?;
+//! let phi = eq.efield.phi(0.01, PI, None, None)?;
 //! # Ok(())
 //! # }
 //! ```
