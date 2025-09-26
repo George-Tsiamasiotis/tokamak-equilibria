@@ -4,9 +4,11 @@ use rsl_interpolation::Accelerator;
 
 use crate::Result;
 
+mod numerical;
 mod parabolic;
 mod unity;
 
+pub use numerical::Numerical;
 pub use parabolic::Parabolic;
 pub use unity::Unity;
 
