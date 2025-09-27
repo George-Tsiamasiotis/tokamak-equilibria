@@ -54,13 +54,13 @@ impl Parabolic {
 
 impl Qfactor for Parabolic {
     #[allow(unused_variables)]
-    fn q(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64> {
+    fn q(&self, psi: f64, acc: &mut Accelerator) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(self.q0 + self.diff * (psi / self.psi_wall).powi(2))
     }
 
     #[allow(unused_variables)]
-    fn psip(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64> {
+    fn psip(&self, psi: f64, acc: &mut Accelerator) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         let atan = (self.sqrt_diff * psi / self.sqrt_q0psi_wall).atan();
         let psip = self.psi_wall / self.sqrt_prod * atan;
@@ -72,6 +72,7 @@ impl Qfactor for Parabolic {
 mod test {
     use crate::*;
     use is_close::is_close;
+    use rsl_interpolation::Accelerator;
 
     #[test]
     /// Values cross-tested with gcmotion.
@@ -79,27 +80,29 @@ mod test {
         let q0 = 1.1;
         let qwall = 3.8;
         let psi_wall = 0.04591368227731865;
+
+        let mut acc = Accelerator::new();
         let qfactor = qfactor::Parabolic::new(q0, qwall, psi_wall).unwrap();
 
-        assert!(is_close!(qfactor.q(0.0, None).unwrap(), q0));
-        assert!(is_close!(qfactor.q(0.01, None).unwrap(), 1.228079468));
+        assert!(is_close!(qfactor.q(0.0, &mut acc).unwrap(), q0));
+        assert!(is_close!(qfactor.q(0.01, &mut acc).unwrap(), 1.228079468));
         assert!(is_close!(
-            qfactor.q(0.03, None).unwrap(),
+            qfactor.q(0.03, &mut acc).unwrap(),
             2.2527152119999996
         ));
-        assert!(is_close!(qfactor.q(psi_wall, None).unwrap(), qwall));
+        assert!(is_close!(qfactor.q(psi_wall, &mut acc).unwrap(), qwall));
 
-        assert!(is_close!(qfactor.psip(0.0, None).unwrap(), 0.0));
+        assert!(is_close!(qfactor.psip(0.0, &mut acc).unwrap(), 0.0));
         assert!(is_close!(
-            qfactor.psip(0.01, None).unwrap(),
+            qfactor.psip(0.01, &mut acc).unwrap(),
             0.00876084223156207
         ));
         assert!(is_close!(
-            qfactor.psip(0.03, None).unwrap(),
+            qfactor.psip(0.03, &mut acc).unwrap(),
             0.021236184655956582
         ));
         assert!(is_close!(
-            qfactor.psip(psi_wall, None).unwrap(),
+            qfactor.psip(psi_wall, &mut acc).unwrap(),
             0.026713778215136246
         ));
     }

@@ -2,7 +2,6 @@ use std::path::PathBuf;
 
 use rsl_interpolation::{Accelerator, DynSpline};
 
-use crate::EqError;
 use crate::Qfactor;
 use crate::Result;
 
@@ -71,18 +70,14 @@ impl Numerical {
 }
 
 impl Qfactor for Numerical {
-    fn q(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64> {
-        match acc {
-            Some(acc) => Ok(self.q_spline.eval(psi, acc)?),
-            None => Err(EqError::AccError),
-        }
+    fn q(&self, psi: f64, acc: &mut Accelerator) -> Result<f64> {
+        debug_assert!(psi.is_sign_positive());
+        Ok(self.q_spline.eval(psi, acc)?)
     }
 
-    fn psip(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64> {
-        match acc {
-            Some(acc) => Ok(self.psip_spline.eval(psi, acc)?),
-            None => Err(EqError::AccError),
-        }
+    fn psip(&self, psi: f64, acc: &mut Accelerator) -> Result<f64> {
+        debug_assert!(psi.is_sign_positive());
+        Ok(self.psip_spline.eval(psi, acc)?)
     }
 }
 
@@ -106,21 +101,19 @@ mod test {
             Err(_) => return,
         };
 
-        let mut accelerator = Accelerator::new();
-        let acc = &mut accelerator;
+        let mut acc = Accelerator::new();
         let qf = Numerical::from_dataset(&path, "Linear").unwrap();
 
-        dbg!(qf.q(0.0, Some(acc)).unwrap());
-        assert_eq!(qf.q(0.0, Some(acc)).unwrap(), 0.9164152189670636); // inserted value
+        assert_eq!(qf.q(0.0, &mut acc).unwrap(), 0.9164152189670636); // inserted value
         // Use a relatively high relative tolerance, since the splines are not exactly the same.
         assert!(is_close!(
-            qf.q(0.1, Some(acc)).unwrap(),
+            qf.q(0.1, &mut acc).unwrap(),
             1.9514842302135769,
             rel_tol = 1e-4
         ));
         assert!(is_close!(
             // wall value
-            qf.q(0.19889475414290547, Some(acc)).unwrap(),
+            qf.q(0.19889475414290547, &mut acc).unwrap(),
             5.996391839022671,
             rel_tol = 1e-9
         ));

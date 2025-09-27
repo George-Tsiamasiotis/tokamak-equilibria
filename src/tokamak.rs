@@ -10,7 +10,7 @@ use crate::qfactor::Qfactor;
 ///
 /// Contains all the information of the magnetic field, electric field and q-factor.
 #[non_exhaustive]
-pub struct Equilibrium<Q, B, C, E>
+pub struct Tokamak<Q, B, C, E>
 where
     Q: Qfactor,
     B: Bfield,
@@ -27,14 +27,14 @@ where
     pub efield: E,
 }
 
-impl<Q, B, C, E> Equilibrium<Q, B, C, E>
+impl<Q, B, C, E> Tokamak<Q, B, C, E>
 where
     Q: Qfactor,
     B: Bfield,
     C: Current,
     E: Efield,
 {
-    /// Constructs an Equilibrium from analytical [`crate::qfactor`], [`crate::bfield`] and
+    /// Constructs a `Tokamak` from analytical [`crate::qfactor`], [`crate::bfield`] and
     /// [`crate::efield`].
     ///
     /// # Example
@@ -47,7 +47,8 @@ where
     /// let bfield = bfield::Lar::new()?;
     /// let current = current::Lar::new()?;
     /// let efield = efield::NoEfield::new()?;
-    /// let eq = Equilibrium::from_analytical(qfactor, bfield, current, efield)?;
+    ///
+    /// let eq = Tokamak::from_analytical(qfactor, bfield, current, efield)?;
     /// # Ok(())
     /// # }
     /// ```
@@ -69,6 +70,8 @@ where
 
 #[cfg(test)]
 mod test {
+    use rsl_interpolation::Accelerator;
+
     use crate::*;
 
     #[test]
@@ -78,11 +81,17 @@ mod test {
         let current = current::Lar::new().unwrap();
         let efield = efield::NoEfield::new().unwrap();
 
-        let eq = Equilibrium::from_analytical(qfactor, bfield, current, efield).unwrap();
+        let mut psi_acc = Accelerator::new();
+        let mut theta_acc = Accelerator::new();
+        let eq = Tokamak::from_analytical(qfactor, bfield, current, efield).unwrap();
 
-        eq.bfield.b(0.01, 3.14, None, None).unwrap();
-        eq.efield.phi(0.01, 3.14, None, None).unwrap();
-        eq.current.i(0.01, None).unwrap();
-        eq.qfactor.q(0.01, None).unwrap();
+        eq.bfield
+            .b(0.01, 3.14, &mut psi_acc, &mut theta_acc)
+            .unwrap();
+        eq.efield
+            .phi(0.01, 3.14, &mut psi_acc, &mut theta_acc)
+            .unwrap();
+        eq.current.i(0.01, &mut psi_acc).unwrap();
+        eq.qfactor.q(0.01, &mut psi_acc).unwrap();
     }
 }

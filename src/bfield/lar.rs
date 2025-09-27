@@ -33,8 +33,8 @@ impl Bfield for Lar {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(1.0 - (2.0 * psi).sqrt() * theta.cos())
@@ -46,8 +46,8 @@ impl Bfield for Lar {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok((2.0 * psi).sqrt() * theta.sin())
@@ -59,8 +59,8 @@ impl Bfield for Lar {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(-theta.cos() / (2.0 * psi).sqrt())
@@ -72,8 +72,8 @@ impl Bfield for Lar {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(theta.cos() / (2.0 * psi.sqrt()).powf(3.0 / 2.0))
@@ -83,19 +83,29 @@ impl Bfield for Lar {
 #[cfg(test)]
 mod test {
     use crate::*;
+    use rsl_interpolation::*;
 
     #[test]
     /// Values cross-tested with gcmotion.
     fn test_lar() {
+        let mut psi_acc = Accelerator::new();
+        let mut theta_acc = Accelerator::new();
         let bfield = bfield::Lar::new().unwrap();
 
-        assert_eq!(bfield.b(0.01, 1.0, None, None).unwrap(), 0.9235897151259821);
         assert_eq!(
-            bfield.db_dpsi(0.01, 1.0, None, None).unwrap(),
+            bfield.b(0.01, 1.0, &mut psi_acc, &mut theta_acc).unwrap(),
+            0.9235897151259821
+        );
+        assert_eq!(
+            bfield
+                .db_dpsi(0.01, 1.0, &mut psi_acc, &mut theta_acc)
+                .unwrap(),
             -3.820514243700898
         );
         assert_eq!(
-            bfield.db_dtheta(0.01, 1.0, None, None).unwrap(),
+            bfield
+                .db_dtheta(0.01, 1.0, &mut psi_acc, &mut theta_acc)
+                .unwrap(),
             0.11900196790587718
         );
     }

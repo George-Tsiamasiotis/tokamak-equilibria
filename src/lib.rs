@@ -3,6 +3,7 @@
 //!
 //! ```
 //! # use tokamak_equilibria::*;
+//! # use rsl_interpolation::*;
 //! # use std::f64::consts::PI;
 //! #
 //! # fn main() -> Result<()> {
@@ -11,18 +12,21 @@
 //! let bfield = bfield::Lar::new()?;
 //! let current = current::Lar::new()?;
 //! let efield = efield::NoEfield::new()?;
-//! let eq = Equilibrium::from_analytical(qfactor, bfield, current, efield)?;
+//!
+//! let mut psi_acc = Accelerator::new();
+//! let mut theta_acc = Accelerator::new();
+//! let eq = Tokamak::from_analytical(qfactor, bfield, current, efield)?;
 //!
 //! // Evaluation of electromagnetic field and q-factor inside the tokamak.
-//! let q = eq.qfactor.q(0.01, None)?;
-//! let b = eq.bfield.b(0.01, PI, None, None)?;
-//! let i = eq.current.i(0.01, None)?;
-//! let phi = eq.efield.phi(0.01, PI, None, None)?;
+//! let q = eq.qfactor.q(0.01, &mut psi_acc)?;
+//! let b = eq.bfield.b(0.01, PI, &mut psi_acc, &mut theta_acc)?;
+//! let i = eq.current.i(0.01, &mut psi_acc)?;
+//! let phi = eq.efield.phi(0.01, PI, &mut psi_acc, &mut theta_acc)?;
 //! # Ok(())
 //! # }
 //! ```
-mod equilibrium;
 mod error;
+mod tokamak;
 
 pub mod bfield;
 pub mod current;
@@ -32,7 +36,7 @@ pub mod qfactor;
 pub use error::EqError;
 
 #[doc(inline)]
-pub use equilibrium::Equilibrium;
+pub use tokamak::Tokamak;
 
 #[doc(inline)]
 pub use bfield::Bfield;

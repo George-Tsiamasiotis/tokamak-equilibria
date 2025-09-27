@@ -16,11 +16,15 @@ pub trait Bfield {
     ///
     /// ```
     /// # use tokamak_equilibria::*;
+    /// # use rsl_interpolation::*;
     /// # use std::f64::consts::PI;
     /// #
     /// # fn main() -> Result<()> {
+    /// let mut psi_acc = Accelerator::new();
+    /// let mut theta_acc = Accelerator::new();
     /// let bfield = bfield::Lar::new()?;
-    /// let b =  bfield.b(0.015, 2.0*PI, None, None)?;
+    ///
+    /// let b =  bfield.b(0.015, 2.0*PI, &mut psi_acc, &mut theta_acc)?;
     /// # Ok(())
     /// # }
     /// ```
@@ -28,8 +32,8 @@ pub trait Bfield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64>;
 
     /// Calculates `𝜕B /𝜕𝜃`.
@@ -38,11 +42,15 @@ pub trait Bfield {
     ///
     /// ```
     /// # use tokamak_equilibria::*;
+    /// # use rsl_interpolation::*;
     /// # use std::f64::consts::PI;
     /// #
     /// # fn main() -> Result<()> {
+    /// let mut psi_acc = Accelerator::new();
+    /// let mut theta_acc = Accelerator::new();
     /// let bfield = bfield::Lar::new()?;
-    /// let b =  bfield.db_dtheta(0.015, 2.0*PI, None, None)?;
+    ///
+    /// let db_dtheta =  bfield.db_dtheta(0.015, 2.0*PI, &mut psi_acc, &mut theta_acc)?;
     /// # Ok(())
     /// # }
     /// ```
@@ -50,8 +58,8 @@ pub trait Bfield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64>;
 
     /// Calculates `𝜕B /𝜕ψ`.
@@ -60,11 +68,15 @@ pub trait Bfield {
     ///
     /// ```
     /// # use tokamak_equilibria::*;
+    /// # use rsl_interpolation::*;
     /// # use std::f64::consts::PI;
     /// #
     /// # fn main() -> Result<()> {
+    /// let mut psi_acc = Accelerator::new();
+    /// let mut theta_acc = Accelerator::new();
     /// let bfield = bfield::Lar::new()?;
-    /// let b =  bfield.db_dpsi(0.015, 2.0*PI, None, None)?;
+    ///
+    /// let db_dpsi =  bfield.db_dpsi(0.015, 2.0*PI, &mut psi_acc, &mut theta_acc)?;
     /// # Ok(())
     /// # }
     /// ```
@@ -72,8 +84,8 @@ pub trait Bfield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64>;
 
     /// Calculates `𝜕²B /𝜕𝜓²`.
@@ -82,11 +94,15 @@ pub trait Bfield {
     ///
     /// ```
     /// # use tokamak_equilibria::*;
+    /// # use rsl_interpolation::*;
     /// # use std::f64::consts::PI;
     /// #
     /// # fn main() -> Result<()> {
+    /// let mut psi_acc = Accelerator::new();
+    /// let mut theta_acc = Accelerator::new();
     /// let bfield = bfield::Lar::new()?;
-    /// let b =  bfield.d2b_dpsi2(0.015, 2.0*PI, None, None)?;
+    ///
+    /// let d2b_dpsi2 =  bfield.d2b_dpsi2(0.015, 2.0*PI, &mut psi_acc, &mut theta_acc)?;
     /// # Ok(())
     /// # }
     /// ```
@@ -94,7 +110,7 @@ pub trait Bfield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64>;
 }

@@ -17,8 +17,8 @@ pub trait Efield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64>;
 
     /// Calculates `E(ψ, θ)`.
@@ -26,8 +26,8 @@ pub trait Efield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64>;
 
     /// Calculates `𝜕𝛷 /𝜕𝜓`.
@@ -35,8 +35,8 @@ pub trait Efield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64>;
 
     /// Calculates `𝜕²𝛷 /𝜕𝜓²`.
@@ -44,7 +44,7 @@ pub trait Efield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> Result<f64>;
 }

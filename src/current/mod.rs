@@ -16,14 +16,17 @@ pub trait Current {
     ///
     /// ```
     /// # use tokamak_equilibria::*;
+    /// # use rsl_interpolation::*;
     /// #
     /// # fn main() -> Result<()> {
+    /// let mut acc = Accelerator::new();
     /// let cur = current::Lar::new()?;
-    /// let i = cur.i(0.015, None)?;
+    ///
+    /// let i = cur.i(0.015, &mut acc)?;
     /// # Ok(())
     /// # }
     /// ```
-    fn i(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64>;
+    fn i(&self, psi: f64, acc: &mut Accelerator) -> Result<f64>;
 
     /// Calculates `g(ψ, θ)`
     ///
@@ -31,14 +34,17 @@ pub trait Current {
     ///
     /// ```
     /// # use tokamak_equilibria::*;
+    /// # use rsl_interpolation::*;
     /// #
     /// # fn main() -> Result<()> {
+    /// let mut acc = Accelerator::new();
     /// let cur = current::Lar::new()?;
-    /// let g = cur.g(0.015, None)?;
+    ///
+    /// let g = cur.g(0.015, &mut acc)?;
     /// # Ok(())
     /// # }
     /// ```
-    fn g(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64>;
+    fn g(&self, psi: f64, acc: &mut Accelerator) -> Result<f64>;
 
     /// Calculates `𝜕I(ψ, θ)/𝜕ψ`
     ///
@@ -46,10 +52,13 @@ pub trait Current {
     ///
     /// ```
     /// # use tokamak_equilibria::*;
+    /// # use rsl_interpolation::*;
     /// #
     /// # fn main() -> Result<()> {
+    /// let mut acc = Accelerator::new();
     /// let cur = current::Lar::new()?;
-    /// let i_der = cur.i_der(0.015, None)?;
+    ///
+    /// let i_der = cur.i_der(0.015, &mut acc)?;
     /// # Ok(())
     /// # }
     /// ```
@@ -59,7 +68,7 @@ pub trait Current {
     /// Current derivatives are calculated with respect to `ψ`, and not `𝜓ₚ`, which appears in the
     /// guiding center equations of motion. To get the derivatives with respect to `𝜓ₚ`, we can
     /// simply multiply with `q(ψ)`.
-    fn i_der(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64>;
+    fn i_der(&self, psi: f64, acc: &mut Accelerator) -> Result<f64>;
 
     /// Calculates `𝜕g(ψ, θ)/𝜕ψ`
     ///
@@ -67,10 +76,13 @@ pub trait Current {
     ///
     /// ```
     /// # use tokamak_equilibria::*;
+    /// # use rsl_interpolation::*;
     /// #
     /// # fn main() -> Result<()> {
+    /// let mut acc = Accelerator::new();
     /// let cur = current::Lar::new()?;
-    /// let g_der = cur.g_der(0.015, None)?;
+    ///
+    /// let g_der = cur.g_der(0.015, &mut acc)?;
     /// # Ok(())
     /// # }
     /// ```
@@ -80,5 +92,5 @@ pub trait Current {
     /// Current derivatives are calculated with respect to `ψ`, and not `𝜓ₚ`, which appears in the
     /// guiding center equations of motion. To get the derivatives with respect to `𝜓ₚ`, we can
     /// simply multiply with `q(ψ)`.
-    fn g_der(&self, psi: f64, acc: Option<&mut Accelerator>) -> Result<f64>;
+    fn g_der(&self, psi: f64, acc: &mut Accelerator) -> Result<f64>;
 }

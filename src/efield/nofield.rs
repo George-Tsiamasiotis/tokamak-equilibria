@@ -21,8 +21,8 @@ impl Efield for NoEfield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> crate::Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(0.0)
@@ -34,8 +34,8 @@ impl Efield for NoEfield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> crate::Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(0.0)
@@ -47,8 +47,8 @@ impl Efield for NoEfield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> crate::Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(0.0)
@@ -60,8 +60,8 @@ impl Efield for NoEfield {
         &self,
         psi: f64,
         theta: f64,
-        xacc: Option<&mut Accelerator>,
-        yacc: Option<&mut Accelerator>,
+        xacc: &mut Accelerator,
+        yacc: &mut Accelerator,
     ) -> crate::Result<f64> {
         debug_assert!(psi.is_sign_positive());
         Ok(0.0)
@@ -70,15 +70,19 @@ impl Efield for NoEfield {
 
 #[cfg(test)]
 mod test {
+    use rsl_interpolation::Accelerator;
+
     use crate::*;
 
     #[test]
     fn test_no_efield() {
+        let mut a1 = Accelerator::new();
+        let mut a2 = Accelerator::new();
         let efield = efield::NoEfield::new().unwrap();
 
-        assert_eq!(efield.phi(0.0, 0.0, None, None).unwrap(), 0.0);
-        assert_eq!(efield.e(0.0, 0.0, None, None).unwrap(), 0.0);
-        assert_eq!(efield.dphi_dpsi(0.0, 0.0, None, None).unwrap(), 0.0);
-        assert_eq!(efield.dphi_dtheta(0.0, 0.0, None, None).unwrap(), 0.0);
+        assert_eq!(efield.phi(0.0, 0.0, &mut a1, &mut a2).unwrap(), 0.0);
+        assert_eq!(efield.e(0.0, 0.0, &mut a1, &mut a2).unwrap(), 0.0);
+        assert_eq!(efield.dphi_dpsi(0.0, 0.0, &mut a1, &mut a2).unwrap(), 0.0);
+        assert_eq!(efield.dphi_dtheta(0.0, 0.0, &mut a1, &mut a2).unwrap(), 0.0);
     }
 }
