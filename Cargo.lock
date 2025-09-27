@@ -1070,6 +1070,7 @@ name = "tokamak-equilibria"
 version = "0.1.0"
 dependencies = [
  "is_close",
+ "ndarray",
  "rsl-interpolation",
  "thiserror",
  "tokamak-netcdf",

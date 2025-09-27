@@ -5,8 +5,10 @@ use rsl_interpolation::Accelerator;
 use crate::Result;
 
 mod lar;
+mod numerical;
 
 pub use lar::*;
+pub use numerical::Numerical;
 
 /// Calculation of magnetic field related quantities.
 pub trait Bfield {

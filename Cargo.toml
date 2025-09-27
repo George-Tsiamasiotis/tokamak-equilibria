@@ -11,6 +11,7 @@ description = "Representations of Tokamak equilibria for use in scientific calcu
 
 [dependencies]
 is_close = "0.1.3"
+ndarray = "0.16.1"
 rsl-interpolation = "0.1.11"
 thiserror = "2.0.16"
 tokamak-netcdf = { git = "https://github.com/George-Tsiamasiotis/tokamak-netcdf", version = "0.1.2" }
