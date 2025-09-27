@@ -98,15 +98,11 @@ mod test {
     use crate::qfactor::Numerical;
     use crate::*;
 
-    /// Returns early if no .nc file is found.
-    /// Values cross-tested with gcmotion.
     #[test]
+    #[ignore = "needs specific dataset"]
+    /// Values cross-tested with gcmotion.
     fn test_numeric_qfactor_qvalues() {
         let path = PathBuf::from("./reconstructed/smart_positive.nc");
-        match tokamak_netcdf::Equilibrium::from_file(&path) {
-            Ok(_) => (),
-            Err(_) => return,
-        };
 
         let mut acc = Accelerator::new();
         let qf = Numerical::from_dataset(&path, "Akima").unwrap();
@@ -127,14 +123,10 @@ mod test {
     }
 
     #[test]
-    /// Returns early if no .nc file is found.
+    #[ignore = "needs specific dataset"]
     /// Values cross-tested with gcmotion.
     fn test_numeric_qfactor_psip() {
         let path = PathBuf::from("./reconstructed/smart_positive.nc");
-        match tokamak_netcdf::Equilibrium::from_file(&path) {
-            Ok(_) => (),
-            Err(_) => return,
-        };
 
         let mut acc = Accelerator::new();
         let qf = Numerical::from_dataset(&path, "Akima").unwrap();

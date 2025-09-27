@@ -109,14 +109,10 @@ mod test {
     use crate::bfield::Numerical;
 
     #[test]
-    /// Returns early if no .nc file is found.
+    #[ignore = "needs specific dataset"]
     /// Specific b-values alues cross-tested with gcmotion.
     fn test_numeric_bfield_indices() {
         let path = PathBuf::from("./reconstructed/smart_positive.nc");
-        match tokamak_netcdf::Equilibrium::from_file(&path) {
-            Ok(_) => (),
-            Err(_) => return,
-        };
 
         let bf = Numerical::from_dataset(&path, "Bicubic").unwrap();
         let b = bf.b_data;
