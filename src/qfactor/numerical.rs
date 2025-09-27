@@ -52,14 +52,21 @@ impl Numerical {
 
         let q_spline = make_spline(typ, &psi_data, &q_data)?;
 
+        // psip values calculation
+        let iota_data: Vec<f64> = q_data.iter().map(|q| 1.0 / q).collect();
+        let iota_spline = make_spline(typ, &psi_data, &iota_data)?;
+
         let mut psip_data: Vec<f64> = Vec::with_capacity(psi_data.len());
+
         let mut acc = Accelerator::new();
         for psi in psi_data.iter() {
-            let psip = q_spline.eval_integ(0.0, *psi, &mut acc)?;
+            let psip = iota_spline.eval_integ(0.0, *psi, &mut acc)?;
             psip_data.push(psip);
         }
 
         let psip_spline = make_spline(typ, &psi_data, &psip_data)?;
+
+        debug_assert_eq!(q_spline.xa.len(), psip_spline.xa.len());
 
         Ok(Self {
             q_spline,
@@ -94,7 +101,7 @@ mod test {
     /// Returns early if no .nc file is found.
     /// Values cross-tested with gcmotion.
     #[test]
-    fn test_numeric_qfactor() {
+    fn test_numeric_qfactor_qvalues() {
         let path = PathBuf::from("./reconstructed/smart_positive.nc");
         match tokamak_netcdf::Equilibrium::from_file(&path) {
             Ok(_) => (),
@@ -102,7 +109,7 @@ mod test {
         };
 
         let mut acc = Accelerator::new();
-        let qf = Numerical::from_dataset(&path, "Linear").unwrap();
+        let qf = Numerical::from_dataset(&path, "Akima").unwrap();
 
         assert_eq!(qf.q(0.0, &mut acc).unwrap(), 0.9164152189670636); // inserted value
         // Use a relatively high relative tolerance, since the splines are not exactly the same.
@@ -116,6 +123,32 @@ mod test {
             qf.q(0.19889475414290547, &mut acc).unwrap(),
             5.996391839022671,
             rel_tol = 1e-9
+        ));
+    }
+
+    #[test]
+    /// Returns early if no .nc file is found.
+    /// Values cross-tested with gcmotion.
+    fn test_numeric_qfactor_psip() {
+        let path = PathBuf::from("./reconstructed/smart_positive.nc");
+        match tokamak_netcdf::Equilibrium::from_file(&path) {
+            Ok(_) => (),
+            Err(_) => return,
+        };
+
+        let mut acc = Accelerator::new();
+        let qf = Numerical::from_dataset(&path, "Akima").unwrap();
+
+        assert_eq!(qf.psip(0.0, &mut acc).unwrap(), 0.0);
+        assert!(is_close!(
+            qf.psip(0.1, &mut acc).unwrap(),
+            0.07745443648243741,
+            rel_tol = 1e-4
+        ));
+        assert!(is_close!(
+            qf.psip(0.19889475414290547, &mut acc).unwrap(),
+            0.11079153406091534,
+            rel_tol = 1e-4
         ));
     }
 }
