@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use crate::Result;
 use crate::bfield::Bfield;
 use crate::current::Current;
@@ -48,11 +46,11 @@ where
     /// let current = current::Lar::new()?;
     /// let efield = efield::NoEfield::new()?;
     ///
-    /// let eq = Tokamak::from_analytical(qfactor, bfield, current, efield)?;
+    /// let eq = Tokamak::build(qfactor, bfield, current, efield)?;
     /// # Ok(())
     /// # }
     /// ```
-    pub fn from_analytical(qfactor: Q, bfield: B, current: C, efield: E) -> Result<Self> {
+    pub fn build(qfactor: Q, bfield: B, current: C, efield: E) -> Result<Self> {
         Ok(Self {
             qfactor,
             bfield,
@@ -60,22 +58,18 @@ where
             efield,
         })
     }
-
-    /// Constructs an Equilibrium with data from a netCDF file.
-    pub fn from_dataset(path: &PathBuf) -> Result<Self> {
-        let _file = tokamak_netcdf::Equilibrium::from_file(path)?;
-        todo!()
-    }
 }
 
 #[cfg(test)]
 mod test {
+    use std::path::PathBuf;
+
     use rsl_interpolation::Accelerator;
 
     use crate::*;
 
     #[test]
-    fn test_analytical_eq() {
+    fn test_analytical_tokamak() {
         let qfactor = qfactor::Unity::new().unwrap();
         let bfield = bfield::Lar::new().unwrap();
         let current = current::Lar::new().unwrap();
@@ -83,7 +77,7 @@ mod test {
 
         let mut psi_acc = Accelerator::new();
         let mut theta_acc = Accelerator::new();
-        let eq = Tokamak::from_analytical(qfactor, bfield, current, efield).unwrap();
+        let eq = Tokamak::build(qfactor, bfield, current, efield).unwrap();
 
         eq.bfield
             .b(0.01, 3.14, &mut psi_acc, &mut theta_acc)
@@ -93,5 +87,25 @@ mod test {
             .unwrap();
         eq.current.i(0.01, &mut psi_acc).unwrap();
         eq.qfactor.q(0.01, &mut psi_acc).unwrap();
+    }
+
+    #[test]
+    #[ignore = "needs specific dataset"]
+    fn test_numerical_tokamak() {
+        let path = PathBuf::from("./reconstructed/smart_positive.nc");
+        let typ = "Cubic";
+        let typ2d = "Bicubic";
+
+        let qfactor = crate::qfactor::Numerical::from_dataset(&path, typ).unwrap();
+        let bfield = crate::bfield::Numerical::from_dataset(&path, typ2d).unwrap();
+        let current = crate::current::Numerical::from_dataset(&path, typ).unwrap();
+        let efield = crate::efield::NoEfield::new().unwrap();
+
+        let _t = Tokamak {
+            qfactor,
+            bfield,
+            current,
+            efield,
+        };
     }
 }
