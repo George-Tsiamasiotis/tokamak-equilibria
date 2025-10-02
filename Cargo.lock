@@ -1067,7 +1067,7 @@ dependencies = [
 
 [[package]]
 name = "tokamak-equilibria"
-version = "0.1.1"
+version = "0.1.1-pre.1"
 dependencies = [
  "is_close",
  "ndarray",
