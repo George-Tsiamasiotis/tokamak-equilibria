@@ -39,7 +39,7 @@ impl Current {
         let eq = Equilibrium::from_file(path)?;
 
         // Add 0.0 manualy, which corresponds to q0.
-        let psip_data = extract_var_with_axis_value(&eq.file, PSI_COORD, 0.0)? // FIXME: variable
+        let psip_data = extract_var_with_axis_value(&eq.file, PSIP_COORD, 0.0)?
             .as_standard_layout()
             .to_vec();
         // Manually add q0 to the array.
@@ -75,8 +75,8 @@ impl Current {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn g(&self, psi: f64, acc: &mut Accelerator) -> Result<f64> {
-        Ok(self.g_spline.eval(psi, acc)?)
+    pub fn g(&self, psip: f64, acc: &mut Accelerator) -> Result<f64> {
+        Ok(self.g_spline.eval(psip, acc)?)
     }
 
     /// Calculates `I(ψ_p)`
@@ -140,7 +140,7 @@ impl Current {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn di_dpsip(&self, psi: f64, acc: &mut Accelerator) -> Result<f64> {
-        Ok(self.i_spline.eval_deriv(psi, acc)?)
+    pub fn di_dpsip(&self, psip: f64, acc: &mut Accelerator) -> Result<f64> {
+        Ok(self.i_spline.eval_deriv(psip, acc)?)
     }
 }

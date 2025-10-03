@@ -1,8 +1,8 @@
 mod error;
 
-pub mod bfield;
-pub mod current;
-pub mod qfactor;
+mod bfield;
+mod current;
+mod qfactor;
 
 pub use error::EqError;
 

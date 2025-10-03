@@ -9,6 +9,8 @@ use crate::Result;
 pub struct Qfactor {
     /// Spline over the q-factor data, as a function of ψ_p.
     pub q_spline: DynSpline<f64>,
+    /// Spline over the toroidal flux data, as a function of ψ_p.
+    pub psi_spline: DynSpline<f64>,
 }
 
 impl Qfactor {
@@ -38,7 +40,10 @@ impl Qfactor {
         let eq = Equilibrium::from_file(path)?;
 
         // Add 0.0 manualy, which corresponds to q0.
-        let psip_data = extract_var_with_axis_value(&eq.file, PSI_COORD, 0.0)?
+        let psip_data = extract_var_with_axis_value(&eq.file, PSIP_COORD, 0.0)?
+            .as_standard_layout()
+            .to_vec();
+        let psi_data = extract_var_with_axis_value(&eq.file, PSI_COORD, 0.0)?
             .as_standard_layout()
             .to_vec();
         // Manually add q0 to the array.
@@ -47,8 +52,12 @@ impl Qfactor {
             .to_vec();
 
         let q_spline = make_spline(typ, &psip_data, &q_data)?;
+        let psi_spline = make_spline(typ, &psip_data, &psi_data)?;
 
-        Ok(Self { q_spline })
+        Ok(Self {
+            q_spline,
+            psi_spline,
+        })
     }
 }
 
@@ -71,8 +80,31 @@ impl Qfactor {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn q(&self, psi: f64, acc: &mut Accelerator) -> Result<f64> {
-        debug_assert!(psi.is_sign_positive());
-        Ok(self.q_spline.eval(psi, acc)?)
+    pub fn q(&self, psip: f64, acc: &mut Accelerator) -> Result<f64> {
+        debug_assert!(psip.is_sign_positive());
+        Ok(self.q_spline.eval(psip, acc)?)
+    }
+
+    /// Calculates the toroidal flux `ψ(ψ_p)`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use tokamak_equilibria::*;
+    /// # use std::path::PathBuf;
+    /// # use rsl_interpolation::*;
+    /// #
+    /// # fn main() -> Result<()> {
+    /// let path = PathBuf::from("./data.nc");
+    /// let qfactor = Qfactor::from_dataset(&path, "cubic")?;
+    ///
+    /// let mut acc = Accelerator::new();
+    /// let psi =  qfactor.psi(0.015, &mut acc)?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn psi(&self, psip: f64, acc: &mut Accelerator) -> Result<f64> {
+        debug_assert!(psip.is_sign_positive());
+        Ok(self.psi_spline.eval(psip, acc)?)
     }
 }

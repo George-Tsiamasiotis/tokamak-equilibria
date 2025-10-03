@@ -35,7 +35,7 @@ impl Bfield {
         let eq = Equilibrium::from_file(path)?;
 
         // Add 0.0 manualy, which corresponds to the axis value.
-        let psi_data = extract_var_with_axis_value(&eq.file, PSI_COORD, 0.0)?
+        let psip_data = extract_var_with_axis_value(&eq.file, PSIP_COORD, 0.0)?
             .as_standard_layout()
             .to_vec();
         let theta_data = eq.get_1d(THETA_COORD)?.to_vec();
@@ -47,14 +47,14 @@ impl Bfield {
         let b_data = concatenate![Axis(0), b_axis_values, b_data]; // e.g. [101, 3620]
         let b_data_flat = b_data.flatten().to_vec();
 
-        let b_spline = make_spline2d(typ, &psi_data, &theta_data, &b_data_flat)?;
+        let b_spline = make_spline2d(typ, &psip_data, &theta_data, &b_data_flat)?;
 
         Ok(Self { b_spline })
     }
 }
 
 impl Bfield {
-    /// Calculates `B(ψ, θ)`,
+    /// Calculates `B(ψ_p, θ)`,
     ///
     /// # Example
     ///
@@ -76,12 +76,12 @@ impl Bfield {
     /// ```
     pub fn b(
         &self,
-        psi: f64,
+        psip: f64,
         theta: f64,
         xacc: &mut Accelerator,
         yacc: &mut Accelerator,
     ) -> Result<f64> {
-        Ok(self.b_spline.eval(psi, theta, xacc, yacc)?)
+        Ok(self.b_spline.eval(psip, mod_theta(theta), xacc, yacc)?)
     }
 
     /// Calculates `𝜕B(ψ_p, θ) /𝜕𝜃`.
@@ -106,13 +106,15 @@ impl Bfield {
     /// ```
     pub fn db_dtheta(
         &self,
-        psi: f64,
+        psip: f64,
         theta: f64,
         xacc: &mut Accelerator,
         yacc: &mut Accelerator,
     ) -> Result<f64> {
         // Ok(self.db_dtheta_spline.eval(psi, theta, xacc, yacc)?)
-        Ok(self.b_spline.eval_deriv_y(psi, theta, xacc, yacc)?)
+        Ok(self
+            .b_spline
+            .eval_deriv_y(psip, mod_theta(theta), xacc, yacc)?)
     }
 
     /// Calculates `𝜕B(ψ_p, θ) /𝜕ψ_p`.
@@ -137,13 +139,15 @@ impl Bfield {
     /// ```
     pub fn db_dpsi(
         &self,
-        psi: f64,
+        psip: f64,
         theta: f64,
         xacc: &mut Accelerator,
         yacc: &mut Accelerator,
     ) -> Result<f64> {
         // Ok(self.db_dpsi_spline.eval(psi, theta, xacc, yacc)?)
-        Ok(self.b_spline.eval_deriv_x(psi, theta, xacc, yacc)?)
+        Ok(self
+            .b_spline
+            .eval_deriv_x(psip, mod_theta(theta), xacc, yacc)?)
     }
 
     /// Calculates `𝜕²B(ψ_p, θ) /𝜕𝜓_p²`.
@@ -168,11 +172,19 @@ impl Bfield {
     /// ```
     pub fn d2b_dpsi2(
         &self,
-        psi: f64,
+        psip: f64,
         theta: f64,
         xacc: &mut Accelerator,
         yacc: &mut Accelerator,
     ) -> Result<f64> {
-        Ok(self.b_spline.eval_deriv_xx(psi, theta, xacc, yacc)?)
+        Ok(self
+            .b_spline
+            .eval_deriv_xx(psip, mod_theta(theta), xacc, yacc)?)
     }
+}
+
+/// Returns θ % 2π.
+fn mod_theta(theta: f64) -> f64 {
+    use std::f64::consts::TAU;
+    theta.rem_euclid(TAU)
 }
