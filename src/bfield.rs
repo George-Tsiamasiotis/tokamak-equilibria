@@ -7,7 +7,7 @@ use rsl_interpolation::{Accelerator, DynSpline2d};
 use crate::Result;
 
 /// Magnetic field reconstructed from a netCDF file.
-#[allow(dead_code)]
+#[pyo3::pyclass]
 pub struct Bfield {
     /// Spline over the magnetic field strength data, as a function of ψ_p.
     b_spline: DynSpline2d<f64>,

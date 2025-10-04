@@ -5,6 +5,7 @@ use rsl_interpolation::{Accelerator, DynSpline};
 use crate::Result;
 
 /// Plasma current reconstructed from a netCDF file.
+#[pyo3::pyclass]
 pub struct Current {
     /// Spline over the g-current data, as a function of ψ_p.
     pub g_spline: DynSpline<f64>,

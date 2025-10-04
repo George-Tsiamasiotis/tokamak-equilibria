@@ -6,6 +6,7 @@ use crate::Result;
 
 /// q-factor reconstructed from a netCDF file.
 #[non_exhaustive]
+#[pyo3::pyclass]
 pub struct Qfactor {
     /// Spline over the q-factor data, as a function of ψ_p.
     pub q_spline: DynSpline<f64>,
