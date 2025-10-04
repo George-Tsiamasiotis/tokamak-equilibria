@@ -882,9 +882,9 @@ checksum = "caf4aa5b0f434c91fe5c7f1ecb6a5ece2130b02ad2a590589dda5146df959001"
 
 [[package]]
 name = "rsl-interpolation"
-version = "0.1.11"
+version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae1d907dd5469ba2ad3ee720b0a629bed51a0fad776a47146aaf51d96023d538"
+checksum = "15d22ff3bfee1573495d7b59e22d721762362d8037278980b36878a514195796"
 dependencies = [
  "is_close",
  "ndarray",
@@ -1067,7 +1067,7 @@ dependencies = [
 
 [[package]]
 name = "tokamak-equilibria"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "is_close",
  "ndarray",
